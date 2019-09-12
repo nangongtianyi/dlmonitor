@@ -7,7 +7,10 @@
     <meta content="Things happening in deep learning: arxiv, twitter, reddit" name="description">
     <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,300,400,600,700,900" rel="stylesheet">
     <link href="https://bootswatch.com/3/darkly/bootstrap.min.css" rel="stylesheet">
-    <link href="/static/default.css?v=14" media="all" rel="stylesheet" type="text/css">
+    <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
+    <link href="/static/LaTeXML.css?v=2" media="all" rel="stylesheet" type="text/css">
+    <link href="/static/ltx-article.css" media="all" rel="stylesheet" type="text/css">
+    <link href="/static/default.css?v=15" media="all" rel="stylesheet" type="text/css">
     <script src="https://use.fontawesome.com/f194410606.js">
     </script>
     <script src="https://code.jquery.com/jquery-3.2.1.min.js" type="text/javascript">
@@ -16,7 +19,8 @@
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/2.1.4/js.cookie.min.js" type="text/javascript">
     </script>
-    <script src="/static/app.js?v=12" type="text/javascript">
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+    <script src="/static/app.js?v=13" type="text/javascript">
     </script>
 </head>
 <body>
@@ -52,12 +56,24 @@
                             <h3 style="color:#0ce3ac;">Abstract</h3>
                             <p style="font-size: 20px;">{{ post.abstract }}</p>
                             <p>&nbsp;</p>
-                            <h3 style="color:#0ce3ac;">Introduction (beta)</h3>
-                            <p style="font-size: 20px;">{{ post.introduction }}</p>
-                            <p>&nbsp;</p>
-                            <h3 style="color:#0ce3ac;">Conclusion (beta)</h3>
-                            <p style="font-size: 20px;">{{ post.conclusion }}</p>
-                            <p>&nbsp;</p>
+                            <h3 style="color:#0ce3ac;">Quick Read (beta)</h3>
+                            <div id="latex-content">
+                              {% if html_body == "NOT_AVAILABE" %}
+                              This feature is not avaialbe for this paper.
+                              {% elif html_body == "NOT_EXIST" or html_body == "PROCESSING" %}
+                              <div class="sk-folding-cube">
+                                <div class="sk-cube1 sk-cube"></div>
+                                <div class="sk-cube2 sk-cube"></div>
+                                <div class="sk-cube4 sk-cube"></div>
+                                <div class="sk-cube3 sk-cube"></div>
+                              </div>
+                              <div style="text-align:center;">
+                                loading the full paper ...
+                              </div>
+                              {% else %}
+                              {{ html_body|safe }}
+                              {% endif %}
+                            </div>
                         </div><!-- <ul class="list-unstyled list-inline blog-tags">
                                 <li><a href="#"><span class="fa fa-tag"></span> Example heading</a></li>
                                 <li><a href="#"><span class="fa fa-tag"></span> Example heading</a></li>
@@ -86,6 +102,21 @@
             </div>
         </div>
     </div>
+    {% if html_body == "NOT_EXIST" or html_body == "PROCESSING" %}
+      <script type="text/javascript" defer="defer">
+          dlmonitor.load_fulltext("{{ arxiv_token }}");
+            try {
+                MathJax.Hub.Config({
+                    extensions: ["tex2jax.js"],
+                    jax: ["input/TeX", "output/HTML-CSS"],
+                    tex2jax: {inlineMath: [["$", "$"], ["\\(", "\\)"]]}
+                });
+            } catch (e) {
+                console.log('Mathjax not found');
+            }
+
+      </script>
+    {% endif %}
     {% include 'track.html' %}
 </body>
 </html>
